@@ -63,3 +63,8 @@
         name: lab4-service
         enabled: yes
         state: started
+
+    - name: Check lab4 service health
+      uri:
+        url: http://127.0.0.1:8000/
+        status_code: 200
