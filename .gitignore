@@ -1,0 +1,5 @@
+inventory.ini
+*.pem
+*.key
+id_rsa
+id_rsa.pub
