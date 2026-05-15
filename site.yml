@@ -1,0 +1,65 @@
+---
+- name: Deploy lab4 HTTP service
+  hosts: lab4
+  become: yes
+
+  tasks:
+    - name: Install required packages
+      apt:
+        name:
+          - python3
+          - curl
+        state: present
+        update_cache: yes
+
+    - name: Create service directory
+      file:
+        path: /opt/lab4-service/html
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+
+    - name: Create index.html
+      copy:
+        content: |
+          <html>
+          <head>
+              <meta charset="UTF-8">
+              <title>Lab4 Service</title>
+          </head>
+          <body>
+              <h1>Spiridonova</h1>
+              <p>Lab4 HTTP service is running.</p>
+          </body>
+          </html>
+        dest: /opt/lab4-service/html/index.html
+        owner: www-data
+        group: www-data
+        mode: '0644'
+
+    - name: Copy service script
+      copy:
+        src: service.sh
+        dest: /opt/lab4-service/service.sh
+        owner: www-data
+        group: www-data
+        mode: '0755'
+
+    - name: Copy systemd unit file
+      copy:
+        src: lab4-service.service
+        dest: /etc/systemd/system/lab4-service.service
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Reload systemd
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start lab4 service
+      systemd:
+        name: lab4-service
+        enabled: yes
+        state: started
